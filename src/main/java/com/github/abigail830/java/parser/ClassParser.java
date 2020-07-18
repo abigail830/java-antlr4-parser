@@ -4,7 +4,6 @@ import com.github.abigail830.java.JavaParser;
 import com.github.abigail830.java.model.JClass;
 import com.github.abigail830.java.model.JType;
 import lombok.extern.slf4j.Slf4j;
-import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class ClassParser implements TypeParser {
+public class ClassParser extends TypeParser {
 
     private JavaParser.TypeDeclarationContext ctx;
 
@@ -31,8 +30,9 @@ public class ClassParser implements TypeParser {
         final JavaParser.ClassDeclarationContext context = ctx.classDeclaration();
 
         String className = context.IDENTIFIER().getText();
-        final int startLine = context.start.getLine();
-        final int stopLine = context.stop.getLine();
+        final Integer lineCount = calculateLineCount(ctx.classDeclaration());
+        List<String> annotations = extractTypeAnnotation(ctx);
+        List<String> modifiers = extractModifiers(ctx);
 
         //extents
         String typeType = null;
@@ -55,25 +55,8 @@ public class ClassParser implements TypeParser {
                     .collect(Collectors.toList());
         }
 
-        List<String> annotations = extractTypeAnnotation();
 
-        List<String> modifiers = extractModifiers(annotations);
-
-        return new JClass(className, stopLine - startLine, annotations, modifiers,
-                typeParams, typeType, typeList);
-    }
-
-    private List<String> extractModifiers(List<String> annotations) {
-        List<String> modifiers = new ArrayList<>();
-        if (ctx.classOrInterfaceModifier() != null) {
-            final List<String> allModifiers = ctx.classOrInterfaceModifier().stream()
-                    .map(RuleContext::getText)
-                    .collect(Collectors.toList());
-            modifiers = allModifiers.stream()
-                    .filter((m1 -> !annotations.contains(m1)))
-                    .collect(Collectors.toList());
-        }
-        return modifiers;
+        return new JClass(className, lineCount, annotations, modifiers, typeParams, typeType, typeList);
     }
 
     private String getTypeType(JavaParser.TypeTypeContext context) {
@@ -82,14 +65,5 @@ public class ClassParser implements TypeParser {
                 .collect(Collectors.joining("."));
     }
 
-    private List<String> extractTypeAnnotation() {
-        List<String> annotations = new ArrayList<>();
-        if (ctx.classOrInterfaceModifier() != null) {
-            annotations = ctx.classOrInterfaceModifier().stream()
-                    .filter(modifer -> modifer.annotation() != null)
-                    .map(modifier1 -> modifier1.annotation().qualifiedName().getText())
-                    .collect(Collectors.toList());
-        }
-        return annotations;
-    }
+
 }

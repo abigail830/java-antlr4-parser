@@ -1,10 +1,6 @@
-package com.github.abigail830.java;
+package com.github.abigail830.java.sample;
 
 import lombok.extern.slf4j.Slf4j;
-
-interface Example {
-    String getName();
-}
 
 @Slf4j
 public class ExampleImpl implements Example {
@@ -19,5 +15,9 @@ public class ExampleImpl implements Example {
     public String getName() {
         return name;
     }
+}
+
+interface Example {
+    String getName();
 }
 

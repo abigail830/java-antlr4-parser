@@ -1,0 +1,29 @@
+{
+  "pkgName": "com.github.abigail830.java.sample",
+  "classAnnotations": [],
+  "jImports": [
+    "lombok.extern.slf4j.Slf4j"
+  ],
+  "types": [
+    {
+      "className": "ExampleImpl",
+      "lineCount": 12,
+      "annotations": [
+        "Slf4j"
+      ],
+      "modifiers": [
+        "public"
+      ],
+      "typeParams": [],
+      "implementList": [
+        "Example"
+      ]
+    },
+    {
+      "interfaceName": "Example",
+      "lineCount": 2,
+      "annotations": [],
+      "modifiers": []
+    }
+  ]
+}
