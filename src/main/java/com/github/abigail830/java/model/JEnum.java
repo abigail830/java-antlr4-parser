@@ -14,5 +14,6 @@ import java.util.List;
 public class JEnum extends JType {
 
     String enumName;
+    Integer lineCount;
     List<String> annotations;
 }

@@ -5,12 +5,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class JClass extends JType {
+public class JClass extends JType implements Another, UnkonwT {
 
     String className;
-//    List<String> annotations;
+    Integer lineCount;
+    List<String> annotations;
+    List<String> typeParams;
+    String parentType;
+    List<String> implementList;
 }

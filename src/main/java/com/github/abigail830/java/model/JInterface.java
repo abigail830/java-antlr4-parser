@@ -14,5 +14,6 @@ import java.util.List;
 public class JInterface extends JType {
 
     String interfaceName;
-//    List<String> annotations;
+    Integer lineCount;
+    List<String> annotations;
 }
