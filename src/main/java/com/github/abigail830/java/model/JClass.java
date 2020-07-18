@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class JClass extends JType implements Another, UnkonwT {
+public class JClass extends JType {
 
     String className;
     Integer lineCount;
