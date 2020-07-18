@@ -3,12 +3,15 @@ package com.github.abigail830.java.parser;
 import com.github.abigail830.java.JavaParser;
 import com.github.abigail830.java.model.JClass;
 import com.github.abigail830.java.model.JType;
+import lombok.extern.slf4j.Slf4j;
+import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class ClassParser implements TypeParser {
 
     private JavaParser.TypeDeclarationContext ctx;
@@ -51,23 +54,32 @@ public class ClassParser implements TypeParser {
                     .map(typeParameterContext -> typeParameterContext.IDENTIFIER().getText())
                     .collect(Collectors.toList());
         }
-        return new JClass(className, stopLine - startLine, extractTypeAnnotation(ctx), typeParams, typeType, typeList);
+
+        List<String> annotations = new ArrayList<>();
+        List<String> modifiers = new ArrayList<>();
+        if (ctx.classOrInterfaceModifier() != null) {
+            final List<String> allModifiers = ctx.classOrInterfaceModifier().stream()
+                    .map(RuleContext::getText)
+                    .collect(Collectors.toList());
+
+            annotations = allModifiers.stream()
+                    .filter(m -> m.startsWith("@"))
+                    .collect(Collectors.toList());
+
+            List<String> finalAnnotations = annotations;
+            modifiers = allModifiers.stream()
+                    .filter((m1 -> !finalAnnotations.contains(m1)))
+                    .collect(Collectors.toList());
+        }
+
+
+        return new JClass(className, stopLine - startLine, annotations, modifiers,
+                typeParams, typeType, typeList);
     }
 
     private String getTypeType(JavaParser.TypeTypeContext context) {
         return context.classOrInterfaceType().IDENTIFIER().stream()
                 .map(ParseTree::getText)
                 .collect(Collectors.joining("."));
-    }
-
-    private List<String> extractTypeAnnotation(JavaParser.TypeDeclarationContext ctx) {
-        List<String> annotations = new ArrayList<>();
-        if (ctx.classOrInterfaceModifier() != null) {
-            annotations = ctx.classOrInterfaceModifier().stream()
-                    .filter(modifer -> modifer.annotation() != null)
-                    .map(modifier1 -> modifier1.annotation().qualifiedName().getText())
-                    .collect(Collectors.toList());
-        }
-        return annotations;
     }
 }

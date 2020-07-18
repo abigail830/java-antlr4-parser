@@ -1,6 +1,7 @@
 package com.github.abigail830.java;
 
 import com.github.abigail830.java.model.JNode;
+import com.github.abigail830.java.util.JsonUtil;
 import com.github.abigail830.java.visitor.JavaFileParser;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,8 +36,7 @@ public class App {
         try (Stream<Path> walk = Files.walk(Paths.get(dir))) {
             walk.forEach(fileAnalysis::accept);
         }
-        this.nodes.forEach(node -> log.info("{}", node));
-
+        this.nodes.forEach(node -> log.info("{}", JsonUtil.toJson(node)));
     }
 
     private Consumer<Path> parseJavaFile(List<JNode> jNodeList) {

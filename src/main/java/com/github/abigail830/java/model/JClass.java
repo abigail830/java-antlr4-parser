@@ -16,6 +16,8 @@ public class JClass extends JType {
     String className;
     Integer lineCount;
     List<String> annotations;
+    List<String> modifiers;
+
     List<String> typeParams;
     String parentType;
     List<String> implementList;
