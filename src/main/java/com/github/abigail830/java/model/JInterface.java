@@ -16,4 +16,5 @@ public class JInterface extends JType {
     String interfaceName;
     Integer lineCount;
     List<String> annotations;
+    List<String> modifiers;
 }
