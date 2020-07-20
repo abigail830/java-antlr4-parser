@@ -14,9 +14,13 @@ import java.util.stream.Collectors;
 public class InterfaceParser extends TypeParser {
 
     private JavaParser.TypeDeclarationContext ctx;
+    private List<String> annotations;
+    private List<String> modifiers;
 
-    public InterfaceParser(JavaParser.TypeDeclarationContext ctx) {
+    public InterfaceParser(JavaParser.TypeDeclarationContext ctx, List<String> modifiers, List<String> annotations) {
         this.ctx = ctx;
+        this.annotations = annotations;
+        this.modifiers = modifiers;
     }
 
     @Override
@@ -28,7 +32,6 @@ public class InterfaceParser extends TypeParser {
     public JType extract() {
         final String interfaceName = ctx.interfaceDeclaration().IDENTIFIER().getText();
         final Integer lineCount = calculateLineCount(ctx.interfaceDeclaration());
-        final List<String> annotations = extractTypeAnnotation(ctx);
 
         ConstVisitor constVisitor = new ConstVisitor();
 
@@ -39,7 +42,6 @@ public class InterfaceParser extends TypeParser {
                 .filter(imContext -> imContext.constDeclaration() != null)
                 .map(context -> context.accept(constVisitor))
                 .collect(Collectors.toList());
-        List<String> modifiers = extractModifiers(ctx);
 
         return new JInterface(interfaceName, lineCount, annotations, modifiers, consts);
     }

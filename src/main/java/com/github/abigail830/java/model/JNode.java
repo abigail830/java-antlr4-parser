@@ -14,7 +14,6 @@ import java.util.List;
 public class JNode {
 
     String pkgName;
-    List<String> classAnnotations;
     List<String> jImports;
     List<JType> types;
 

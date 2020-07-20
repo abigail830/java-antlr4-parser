@@ -13,12 +13,8 @@ public class NodeVisitor extends com.github.abigail830.java.JavaParserBaseVisito
     @Override
     public JNode visitCompilationUnit(com.github.abigail830.java.JavaParser.CompilationUnitContext ctx) {
         String pkgName = null;
-        List<String> annotations = new ArrayList<>();
         if (ctx.packageDeclaration() != null) {
             pkgName = ctx.packageDeclaration().qualifiedName().getText();
-            annotations = ctx.packageDeclaration().annotation()
-                    .stream().map(annotationContext -> annotationContext.qualifiedName().getText())
-                    .collect(toList());
         }
 
         List<String> imports = new ArrayList<>();
@@ -34,6 +30,6 @@ public class NodeVisitor extends com.github.abigail830.java.JavaParserBaseVisito
         final List<JType> types = ctx.typeDeclaration().stream()
                 .map(typeDeclarationContext -> typeDeclarationContext.accept(typeDeclarationVisitor))
                 .flatMap(List::stream).collect(toList());
-        return new JNode(pkgName, annotations, imports, types);
+        return new JNode(pkgName, imports, types);
     }
 }

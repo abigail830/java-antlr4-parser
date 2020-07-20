@@ -14,9 +14,13 @@ import java.util.stream.Collectors;
 public class ClassParser extends TypeParser {
 
     private JavaParser.TypeDeclarationContext ctx;
+    private List<String> annotations;
+    private List<String> modifiers;
 
-    public ClassParser(JavaParser.TypeDeclarationContext ctx) {
+    public ClassParser(JavaParser.TypeDeclarationContext ctx, List<String> modifiers, List<String> annotations) {
         this.ctx = ctx;
+        this.annotations = annotations;
+        this.modifiers = modifiers;
     }
 
     @Override
@@ -31,14 +35,11 @@ public class ClassParser extends TypeParser {
 
         String className = context.IDENTIFIER().getText();
         final Integer lineCount = calculateLineCount(ctx.classDeclaration());
-        List<String> annotations = extractTypeAnnotation(ctx);
-        List<String> modifiers = extractModifiers(ctx);
         List<String> typeParams = extractTypeParams(context);
         //extents
         String typeType = extractTypeType(context);
         //implements
         List<String> typeList = extractTypeList(context);
-
 
         return new JClass(className, lineCount, annotations, modifiers, typeParams, typeType, typeList);
     }
