@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
@@ -27,21 +28,27 @@ public class AppTest {
     public void setUp() throws Exception {
         Consumer<Path> fileAnalysis = parseJavaFile(new ArrayList<>());
 
-        try (Stream<Path> walk = Files.walk(Paths.get("./"))) {
+        try (Stream<Path> walk = Files.walk(Paths.get("./src/test/java/com/github/abigail830/java/sample/ExampleImpl.java"))) {
             walk.forEach(fileAnalysis::accept);
         }
-        this.nodes.forEach(node -> log.info("{}", JsonUtil.toJson(node)));
+//        this.nodes.forEach(node -> log.info("{}", JsonUtil.toJson(node)));
     }
 
     @Test
     public void should_match_example() throws IOException {
-        String expect = new String(Files.readAllBytes(Paths.get("./src/test/resources/expect.json")));
-//        final JNode expectNode = JsonUtil.toObject(expect, JNode.class);
-        final long matchCount = this.nodes.stream()
+        String expect = new String(Files.readAllBytes(Paths.get("./src/test/resources/expect.json")))
+                .replace("\n", "")
+                .replace("\t", "")
+                .replace(" ", "");
+
+        final List<String> exampleImpl = this.nodes.stream()
                 .map(jNode -> JsonUtil.toJson(jNode))
-                .filter(nodeJson -> nodeJson.contains(expect))
-                .count();
-        assertEquals(1, matchCount);
+                .filter(nodeJson -> nodeJson.contains("ExampleImpl"))
+                .collect(Collectors.toList());
+        assertEquals(exampleImpl.size(), 1);
+        System.out.println(exampleImpl.get(0));
+        assertEquals(expect, exampleImpl.get(0));
+
     }
 
     private Consumer<Path> parseJavaFile(List<JNode> jNodeList) {

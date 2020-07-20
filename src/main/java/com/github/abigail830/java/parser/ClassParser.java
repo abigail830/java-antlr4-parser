@@ -33,30 +33,42 @@ public class ClassParser extends TypeParser {
         final Integer lineCount = calculateLineCount(ctx.classDeclaration());
         List<String> annotations = extractTypeAnnotation(ctx);
         List<String> modifiers = extractModifiers(ctx);
-
+        List<String> typeParams = extractTypeParams(context);
         //extents
+        String typeType = extractTypeType(context);
+        //implements
+        List<String> typeList = extractTypeList(context);
+
+
+        return new JClass(className, lineCount, annotations, modifiers, typeParams, typeType, typeList);
+    }
+
+    private String extractTypeType(JavaParser.ClassDeclarationContext context) {
         String typeType = null;
         if (context.typeType() != null) {
             typeType = getTypeType(context.typeType());
         }
+        return typeType;
+    }
 
-        //implements
+    private List<String> extractTypeList(JavaParser.ClassDeclarationContext context) {
         List<String> typeList = new ArrayList<>();
         if (context.typeList() != null) {
             typeList = context.typeList().typeType().stream()
                     .map(this::getTypeType)
                     .collect(Collectors.toList());
         }
+        return typeList;
+    }
 
+    private List<String> extractTypeParams(JavaParser.ClassDeclarationContext context) {
         List<String> typeParams = new ArrayList<>();
         if (context.typeParameters() != null) {
             typeParams = context.typeParameters().typeParameter().stream()
                     .map(typeParameterContext -> typeParameterContext.IDENTIFIER().getText())
                     .collect(Collectors.toList());
         }
-
-
-        return new JClass(className, lineCount, annotations, modifiers, typeParams, typeType, typeList);
+        return typeParams;
     }
 
     private String getTypeType(JavaParser.TypeTypeContext context) {

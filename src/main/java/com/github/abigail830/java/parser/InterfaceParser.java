@@ -1,11 +1,16 @@
 package com.github.abigail830.java.parser;
 
 import com.github.abigail830.java.JavaParser;
+import com.github.abigail830.java.model.JConst;
 import com.github.abigail830.java.model.JInterface;
 import com.github.abigail830.java.model.JType;
+import com.github.abigail830.java.visitor.ConstVisitor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Slf4j
 public class InterfaceParser extends TypeParser {
 
     private JavaParser.TypeDeclarationContext ctx;
@@ -24,9 +29,19 @@ public class InterfaceParser extends TypeParser {
         final String interfaceName = ctx.interfaceDeclaration().IDENTIFIER().getText();
         final Integer lineCount = calculateLineCount(ctx.interfaceDeclaration());
         final List<String> annotations = extractTypeAnnotation(ctx);
+
+        ConstVisitor constVisitor = new ConstVisitor();
+
+        final List<JConst> consts = ctx.interfaceDeclaration().interfaceBody().interfaceBodyDeclaration()
+                .stream()
+                .filter(ibContext -> ibContext.interfaceMemberDeclaration() != null)
+                .map(JavaParser.InterfaceBodyDeclarationContext::interfaceMemberDeclaration)
+                .filter(imContext -> imContext.constDeclaration() != null)
+                .map(context -> context.accept(constVisitor))
+                .collect(Collectors.toList());
         List<String> modifiers = extractModifiers(ctx);
 
-        return new JInterface(interfaceName, lineCount, annotations, modifiers);
+        return new JInterface(interfaceName, lineCount, annotations, modifiers, consts);
     }
 
 }

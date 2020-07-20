@@ -18,11 +18,4 @@ public class JNode {
     List<String> jImports;
     List<JType> types;
 
-    //    public void addClass(JClass jClass){
-//        if(classList == null){
-//            classList = new ArrayList<>();
-//        }
-//        classList.add(jClass);
-//    }
-
 }

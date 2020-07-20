@@ -21,9 +21,19 @@
     },
     {
       "interfaceName": "Example",
-      "lineCount": 2,
+      "lineCount": 5,
       "annotations": [],
-      "modifiers": []
+      "modifiers": [],
+      "constants": [
+        {
+          "constType": "String",
+          "constName": "name"
+        },
+        {
+          "constType": "Integer",
+          "constName": "init"
+        }
+      ]
     }
   ]
 }

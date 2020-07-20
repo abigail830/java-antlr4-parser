@@ -5,18 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class JInterface extends JType {
+public class JVariable {
 
-    String interfaceName;
-    Integer lineCount;
-    List<String> annotations;
-    List<String> modifiers;
-
-    List<JConst> constants;
+    String annotations;
+    String variableType;
+    String variableId;
 }
